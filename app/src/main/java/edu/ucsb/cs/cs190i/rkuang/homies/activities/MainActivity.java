@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -30,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     private FirebaseAuth firebaseAuth;
     private GoogleApiClient googleApiClient;
+    private String photoURL;
+    private String name;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,12 +52,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
 
         ImageView nav_avatar = (ImageView) navigationView.getHeaderView(0).findViewById(R.id.nav_avatar);
-        nav_avatar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(MainActivity.this, UserProfileFragment.class));
-            }
-        });
         TextView nav_name = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_name);
         TextView nav_email = (TextView) navigationView.getHeaderView(0).findViewById(R.id.nav_email);
 
@@ -71,9 +69,9 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             startActivity(new Intent(this, SignInActivity.class));
             finish();
         } else {
-            String name = firebaseUser.getDisplayName();
+            name = firebaseUser.getDisplayName();
             String email = firebaseUser.getEmail();
-            String photoURL = firebaseUser.getPhotoUrl().toString();
+            photoURL = firebaseUser.getPhotoUrl().toString();
             String uid = firebaseUser.getUid();
 
             Picasso.with(this).load(photoURL).into(nav_avatar);
@@ -83,6 +81,19 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             User u = new User(name, photoURL, uid);
             db.getReference().child("users").child(u.getUid()).setValue(u);
         }
+
+        nav_avatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UserProfileFragment dialogFragment = UserProfileFragment.newInstance("");
+                FragmentManager fm = getSupportFragmentManager();
+                Bundle b = new Bundle();
+                b.putString("pic", photoURL);
+                b.putString("name", name);
+                dialogFragment.setArguments(b);
+                dialogFragment.show(fm , "fragment_user_profile");
+            }
+        });
     }
 
     @Override

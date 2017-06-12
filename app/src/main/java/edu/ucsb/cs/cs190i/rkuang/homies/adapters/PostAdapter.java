@@ -2,6 +2,9 @@ package edu.ucsb.cs.cs190i.rkuang.homies.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +15,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.support.v4.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -23,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Locale;
 
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
+import edu.ucsb.cs.cs190i.rkuang.homies.fragments.UserProfileFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Item;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
 
@@ -58,20 +63,28 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         final Item item = mData.get(position);
         final User user = item.getUser();
 
-        String username = item.getUser().getName();
+        final String username = item.getUser().getName();
         String date = dateFormat.format(item.getDate());
         String description = item.getDescription();
+        final String uuid = item.getId();
 
         holder.userTextView.setText(username);
         holder.dateTextView.setText(date);
         holder.itemTextView.setText(description);
 
-        String avatarURL = mData.get(position).getUser().getImageURL();
+        final String avatarURL = mData.get(position).getUser().getImageURL();
         Picasso.with(holder.userAvatar.getContext()).load(avatarURL).into(holder.userAvatar);
         holder.userAvatar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                UserProfileFragment dialogFragment = UserProfileFragment.newInstance(uuid);
+                FragmentActivity fa = (FragmentActivity) mContext;
+                FragmentManager fm = fa.getSupportFragmentManager();
+                Bundle b = new Bundle();
+                b.putString("pic", avatarURL);
+                b.putString("name", username);
+                dialogFragment.setArguments(b);
+                dialogFragment.show(fm , "fragment_user_profile");
             }
         });
 
@@ -113,6 +126,7 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
 
     public void addItem(Item item) {
         mData.add(0, item);
+        Log.i(TAG, "addItem: Item added at " + mData.indexOf(item));
         notifyItemInserted(0);
     }
 
