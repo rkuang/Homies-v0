@@ -115,10 +115,11 @@ public class CreateEventFragment extends DialogFragment  {
                 else {
                     EventAdapter.new_post = true;
                     String name = user.getDisplayName();
+                    String email = user.getEmail();
                     String photoURL = user.getPhotoUrl().toString();
                     String uid = user.getUid();
 
-                    Event e = new Event(new User(name, photoURL, uid), eventName, date, time, description, UUID.randomUUID().toString());
+                    Event e = new Event(new User(name, email, photoURL, uid), eventName, date, time, description, UUID.randomUUID().toString());
                     db.child("events").child(e.getId()).setValue(e);
                     me.getDialog().dismiss();
                 }

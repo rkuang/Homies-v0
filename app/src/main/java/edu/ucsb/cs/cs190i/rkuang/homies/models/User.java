@@ -7,6 +7,7 @@ package edu.ucsb.cs.cs190i.rkuang.homies.models;
 public class User {
 
     private String name;
+    private String email;
     private String imageURL;
     private String uid;
 
@@ -14,8 +15,9 @@ public class User {
         // Required empty constructor for Firebase
     }
 
-    public User(String name, String url, String uid) {
+    public User(String name, String email, String url, String uid) {
         this.name = name;
+        this.email = email;
         this.imageURL = url;
         this.uid = uid;
     }
@@ -23,6 +25,10 @@ public class User {
 
     public String getName() {
         return name;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     public String getImageURL() {

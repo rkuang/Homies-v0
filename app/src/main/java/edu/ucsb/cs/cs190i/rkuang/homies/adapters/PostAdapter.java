@@ -1,5 +1,6 @@
 package edu.ucsb.cs.cs190i.rkuang.homies.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -15,18 +16,23 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import android.support.v4.app.Fragment;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
+import edu.ucsb.cs.cs190i.rkuang.homies.fragments.ChargeFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.fragments.UserProfileFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Item;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
@@ -42,17 +48,16 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
     private ArrayList<Item> mData;
     private SimpleDateFormat dateFormat;
     private Context mContext;
-    public static boolean new_post;
+
 
     public PostAdapter() {
         mData = new ArrayList<>();
         dateFormat = new SimpleDateFormat("hh:mm a, MM/dd/yyyy", Locale.US);
-        new_post = false;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_layout , parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_item, parent, false);
         mContext = view.getContext();
         return new ViewHolder(view);
     }
@@ -88,11 +93,18 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             }
         });
 
+        //holder.boughtMarker.setVisibility(View.INVISIBLE);
+
         if (firebaseUser.getUid().equals(user.getUid())) {
             holder.delete.setVisibility(View.VISIBLE);
         } else {
             holder.delete.setVisibility(View.INVISIBLE);
         }
+
+        if (item.isBought())
+            holder.boughtMarker.setVisibility(View.VISIBLE);
+        else
+            holder.boughtMarker.setVisibility(View.INVISIBLE);
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,7 +129,26 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
                 }
             }
         });
+
+        holder.buy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                holder.boughtMarker.setVisibility(View.VISIBLE);
+                DatabaseReference db = FirebaseDatabase.getInstance().getReference("items");
+                db.child(item.getId()).child("bought").setValue(true);
+
+                if (!firebaseUser.getUid().equals(user.getUid())) {
+                    ChargeFragment charge = new ChargeFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("UserOwe", user.getName());
+                    bundle.putString("Itemid",item.getId());
+                    charge.setArguments(bundle);
+                    charge.show(((Activity)v.getContext()).getFragmentManager(), "Charge User");
+                }
+            }
+        });
     }
+
 
     @Override
     public int getItemCount() {
@@ -139,24 +170,34 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         notifyItemRangeChanged(position, getItemCount());
     }
 
+    public void notifyItemChanged(Item item) {
+        int position = mData.indexOf(item);
+        mData.get(position).setBought(true);
+        notifyItemChanged(position);
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView userTextView;
         TextView dateTextView;
         TextView itemTextView;
+        ImageView boughtMarker;
 
         ImageView userAvatar;
 
         ImageButton delete;
+        ImageButton buy;
 
         ViewHolder(View itemView) {
             super(itemView);
             userTextView = (TextView) itemView.findViewById(R.id.user_textview);
             dateTextView = (TextView) itemView.findViewById(R.id.date_textview);
             itemTextView = (TextView) itemView.findViewById(R.id.item_textview);
+            boughtMarker = (ImageView) itemView.findViewById(R.id.BOUGHT);
 
             userAvatar = (ImageView) itemView.findViewById(R.id.user_avatar);
 
             delete = (ImageButton) itemView.findViewById(R.id.delete_button);
+            buy = (ImageButton) itemView.findViewById(R.id.buy_button);
         }
     }
 }

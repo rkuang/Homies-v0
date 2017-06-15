@@ -9,23 +9,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Locale;
 
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Event;
-import edu.ucsb.cs.cs190i.rkuang.homies.models.Item;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
 
 import static android.content.ContentValues.TAG;
@@ -47,7 +42,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     @Override
     public EventAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.event_layout_simple , parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_event, parent, false);
         mContext = view.getContext();
         return new ViewHolder(view);
     }

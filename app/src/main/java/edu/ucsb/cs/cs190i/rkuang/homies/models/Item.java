@@ -13,6 +13,7 @@ public class Item {
     private User user;
     private long date;
     private String description;
+    private boolean bought;
     private String id;
 
     public Item() {
@@ -26,7 +27,9 @@ public class Item {
         this.date = c.getTimeInMillis();
         this.description = description;
         this.id = id;
+        this.bought = false;
     }
+
 
     public User getUser() {
         return user;
@@ -59,5 +62,13 @@ public class Item {
             return this.id.equals(o.getId());
         }
         return false;
+    }
+
+    public boolean isBought() {
+        return bought;
+    }
+
+    public void setBought(boolean bought) {
+        this.bought = bought;
     }
 }

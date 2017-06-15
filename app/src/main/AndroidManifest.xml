@@ -26,8 +26,6 @@
         </activity>
         <activity android:name=".activities.SignInActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".fragments.UserProfileFragment"
-            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

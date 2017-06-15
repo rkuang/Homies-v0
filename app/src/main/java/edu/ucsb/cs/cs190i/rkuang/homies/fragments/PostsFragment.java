@@ -19,8 +19,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import org.w3c.dom.Text;
-
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
 import edu.ucsb.cs.cs190i.rkuang.homies.adapters.PostAdapter;
 import edu.ucsb.cs.cs190i.rkuang.homies.adapters.EventAdapter;
@@ -96,6 +94,8 @@ public class PostsFragment extends Fragment {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Item item = dataSnapshot.getValue(Item.class);
+                postAdapter.notifyItemChanged(item);
             }
 
             @Override

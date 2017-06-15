@@ -22,22 +22,23 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
 import java.util.UUID;
 
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
-import edu.ucsb.cs.cs190i.rkuang.homies.adapters.PostAdapter;
+import edu.ucsb.cs.cs190i.rkuang.homies.adapters.GroupsAdapter;
+import edu.ucsb.cs.cs190i.rkuang.homies.models.Group;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Item;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
 
 import static android.content.ContentValues.TAG;
-import static edu.ucsb.cs.cs190i.rkuang.homies.R.layout.fragment_create_post;
+import static edu.ucsb.cs.cs190i.rkuang.homies.R.layout.fragment_create_group;
 
-public class CreatePostFragment extends DialogFragment {
+public class CreateGroupFragment extends DialogFragment {
 
     DatabaseReference db;
-    FirebaseUser user;
 
-    public CreatePostFragment() {
+    public CreateGroupFragment() {
 
     }
 
@@ -51,14 +52,13 @@ public class CreatePostFragment extends DialogFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         db = FirebaseDatabase.getInstance().getReference();
-        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        return inflater.inflate(fragment_create_post, container, false);
+        return inflater.inflate(fragment_create_group, container, false);
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        final CreatePostFragment me = this;
+        final CreateGroupFragment me = this;
         final EditText editText = (EditText) view.findViewById(R.id.description_field);
         Button button = (Button) view.findViewById(R.id.post_message_button);
         button.setOnClickListener(new View.OnClickListener() {
@@ -67,13 +67,11 @@ public class CreatePostFragment extends DialogFragment {
                 Log.i(TAG, "onClick: post message button clicked");
                 String description = editText.getText().toString();
                 if (description.length() != 0) {
-                    String name = user.getDisplayName();
-                    String email = user.getEmail();
-                    String photoURL = user.getPhotoUrl().toString();
-                    String uid = user.getUid();
+                    ArrayList<String> users = new ArrayList<>();
+                    users.add("John Doe");
+                    Group g = new Group("Group1", 123, users);
 
-                    Item i = new Item(new User(name, email, photoURL, uid), description, UUID.randomUUID().toString());
-                    db.child("items").child(i.getId()).setValue(i);
+                    db.child("groups").child(g.getGroupName()).setValue(g);
                     me.getDialog().dismiss();
                 } else {
                     Snackbar.make(me.getView(), "Enter a description", Snackbar.LENGTH_SHORT).show();

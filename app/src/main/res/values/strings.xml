@@ -10,6 +10,7 @@
     <string name="sign_out">Sign Out</string>
     <string name="title_activity_main2">Main2Activity</string>
     <string name="post_event">Plan Event</string>
+    <string name="post_charge">Post Charge</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
@@ -19,8 +20,15 @@
     <string name="username">Username: </string>
     <string name="useremail">Email: </string>
     <string name="userid">ID: </string>
+    <string name="owed">I am owed: </string>
+    <string name="owe">I owe: </string>
+    <string name="details">View Details</string>
 
     <string name="editpic">Edit Profile Picture</string>
     <string name="cam">Take Profile Picture</string>
     <string name="gallery">Take From Gallery</string>
+
+    <string name="purchase">I have purchased for </string>
+    <string name="purchase_hint">$</string>
+    <string name="none">Nothing</string>
 </resources>
