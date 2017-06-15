@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -111,22 +112,50 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             @Override
             public void onClick(View v) {
                 if (firebaseUser.getUid().equals(user.getUid())) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
-                    builder.setMessage("Are you sure you want to delete this post?")
-                            .setCancelable(false)
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    DatabaseReference db = FirebaseDatabase.getInstance().getReference("items");
-                                    db.child(item.getId()).removeValue();
-                                }
-                            })
-                            .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    if(item.isBought()){
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setMessage("Are you sure you have paid back this person?")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        DatabaseReference dref = FirebaseDatabase.getInstance().getReference();
+                                        dref.child("users").child(firebaseUser.getUid()).child("owe").child(item.getId()).removeValue();
+                                        dref.child("items").child(item.getId()).removeValue();
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    } else {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                        builder.setMessage("Are you sure you want to delete this post?")
+                                .setCancelable(false)
+                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        if (item.getEventID() != null) {
+                                            DatabaseReference db = FirebaseDatabase.getInstance().getReference("events")
+                                                    .child(item.getEventID()).child("posts");
+                                            db.child(item.getId()).removeValue();
+                                        } else {
+                                            DatabaseReference db = FirebaseDatabase.getInstance().getReference("items");
+                                            db.child(item.getId()).removeValue();
+                                        }
+                                    }
+                                })
+                                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                    }
                 }
             }
         });
@@ -134,17 +163,22 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
         holder.buy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.boughtMarker.setVisibility(View.VISIBLE);
-                DatabaseReference db = FirebaseDatabase.getInstance().getReference("items");
-                db.child(item.getId()).child("bought").setValue(true);
+                if(item.isBought()) {
+                    Toast.makeText(v.getContext(), "This item has already been bought.", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    holder.boughtMarker.setVisibility(View.VISIBLE);
+                    DatabaseReference db = FirebaseDatabase.getInstance().getReference("items");
+                    db.child(item.getId()).child("bought").setValue(true);
 
-                if (!firebaseUser.getUid().equals(user.getUid())) {
-                    ChargeFragment charge = new ChargeFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("UserOwe", user.getName());
-                    bundle.putString("Itemid",item.getId());
-                    charge.setArguments(bundle);
-                    charge.show(((Activity)v.getContext()).getFragmentManager(), "Charge User");
+                    if (!firebaseUser.getUid().equals(user.getUid())) {
+                        ChargeFragment charge = new ChargeFragment();
+                        Bundle bundle = new Bundle();
+                        bundle.putString("UserOwe", user.getName());
+                        bundle.putString("Itemid", item.getId());
+                        charge.setArguments(bundle);
+                        charge.show(((Activity) v.getContext()).getFragmentManager(), "Charge User");
+                    }
                 }
             }
         });
@@ -200,5 +234,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             delete = (ImageButton) itemView.findViewById(R.id.delete_button);
             buy = (ImageButton) itemView.findViewById(R.id.buy_button);
         }
+    }
+
+    public boolean isEmpty(){
+        if(getItemCount() == 0) return true;
+        Log.i(TAG, "isEmpty: " + getItemCount());
+        return false;
     }
 }

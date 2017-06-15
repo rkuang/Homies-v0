@@ -12,6 +12,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,6 +25,7 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TimePicker;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -81,18 +83,24 @@ public class CreateEventFragment extends DialogFragment  {
         final CreateEventFragment me = this;
         final EditText nameEditText = (EditText) view.findViewById(R.id.name_field);
         dateText = (EditText) view.findViewById(R.id.date_field);
+        dateText.setInputType(InputType.TYPE_NULL);
         timeText = (EditText) view.findViewById(R.id.time_field);
+        timeText.setInputType(InputType.TYPE_NULL);
         final EditText editText = (EditText) view.findViewById(R.id.description_field);
+        final ImageView calender_pic = (ImageView) view.findViewById(R.id.calender_picture);
+        final ImageView clock_pic = (ImageView) view.findViewById(R.id.clock_picture);
         dateText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickDate(v);
+                calender_pic.setVisibility(View.INVISIBLE);
             }
         });
         timeText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 pickTime(v);
+                clock_pic.setVisibility(View.INVISIBLE);
             }
         });
         Button button = (Button) view.findViewById(R.id.post_event_button);

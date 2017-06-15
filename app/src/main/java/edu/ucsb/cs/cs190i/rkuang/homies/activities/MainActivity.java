@@ -198,7 +198,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public void onPostCharge(double amount, final String itemid) {
-        Toast.makeText(this, String.format(Locale.US, "This person owes me: $%.2f", amount), Toast.LENGTH_SHORT).show();
         final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         final DatabaseReference dref = db.getReference();

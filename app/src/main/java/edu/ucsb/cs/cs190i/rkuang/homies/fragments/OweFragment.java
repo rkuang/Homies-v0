@@ -76,6 +76,9 @@ public class OweFragment extends android.support.v4.app.Fragment {
                         oweAdapter.addPayers(youOwe);
                     }
                 }
+                else {
+                    emptyView.setText(R.string.no_owe);
+                }
             }
 
             @Override

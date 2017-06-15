@@ -2,6 +2,9 @@ package edu.ucsb.cs.cs190i.rkuang.homies.adapters;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,10 +19,10 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import edu.ucsb.cs.cs190i.rkuang.homies.R;
+import edu.ucsb.cs.cs190i.rkuang.homies.fragments.EventDetailsFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Event;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
 
@@ -31,7 +34,6 @@ import static android.content.ContentValues.TAG;
 
 public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> {
     ArrayList<Event> mData;
-    SimpleDateFormat dateFormat;
     Context mContext;
     public static boolean new_post;
 
@@ -52,9 +54,11 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         final FirebaseUser firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         final Event event = mData.get(position);
         final User user = event.getUser();
+        final String id = event.getId();
 
-        String name = event.getEventName();
-        String time = event.getEventTime();
+        final String name = event.getEventName();
+        final String time = event.getEventTime();
+
 
         holder.eventTextView.setText(name);
         holder.dateTimeTextView.setText(time);
@@ -62,7 +66,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
         if (firebaseUser.getUid().equals(user.getUid())) {
             holder.delete.setVisibility(View.VISIBLE);
         } else {
-            holder.delete.setVisibility(View.INVISIBLE);
+            holder.delete.setVisibility(View.GONE);
         }
 
         holder.delete.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +90,30 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
                     AlertDialog alert = builder.create();
                     alert.show();
                 }
+            }
+        });
+
+        holder.more.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.i(TAG, "onClick: Should open new fragment");
+                EventDetailsFragment eventDetailsFragment = EventDetailsFragment.newInstance();
+                FragmentActivity fa = (FragmentActivity) mContext;
+                Bundle b = new Bundle();
+                b.putString("name", user.getName());
+                b.putString("eventname", name);
+                b.putString("date", event.getEventDate());
+                b.putString("time", time);
+                b.putString("details", event.getDescription());
+                b.putString("uuid", id);
+                Log.i(TAG, "onClick: Passing args " + time + " " + name);
+
+                eventDetailsFragment.setArguments(b);
+                FragmentTransaction transaction = fa.getSupportFragmentManager().beginTransaction();
+                transaction.replace(R.id.container, eventDetailsFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
+                transaction.show(eventDetailsFragment);
             }
         });
     }
@@ -112,12 +140,15 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         public TextView eventTextView;
+
         public TextView dateTimeTextView;
         public ImageButton delete;
+        public ImageButton more;
 
 
         public ViewHolder(View eventView) {
             super(eventView);
+            more = (ImageButton) eventView.findViewById(R.id.moreButton);
             eventTextView = (TextView) eventView.findViewById(R.id.eventname_textview);
             dateTimeTextView = (TextView) eventView.findViewById(R.id.datetime_textview);
             delete = (ImageButton) eventView.findViewById(R.id.delete_button2);
@@ -127,7 +158,7 @@ public class EventAdapter extends RecyclerView.Adapter<EventAdapter.ViewHolder> 
 
         @Override
         public void onClick(View v) {
-            }
+        }
     }
 
     public boolean isEmpty(){

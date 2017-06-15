@@ -15,6 +15,7 @@ public class Item {
     private String description;
     private boolean bought;
     private String id;
+    private String eventID;
 
     public Item() {
         // Required Empty Constructor for Firebase
@@ -28,6 +29,16 @@ public class Item {
         this.description = description;
         this.id = id;
         this.bought = false;
+    }
+
+    public Item(User user, String description, String id, String eventID){
+        Calendar c = Calendar.getInstance();
+
+        this.eventID = eventID;
+        this.user = user;
+        this.date = c.getTimeInMillis();
+        this.description = description;
+        this.id = id;
     }
 
 
@@ -70,5 +81,9 @@ public class Item {
 
     public void setBought(boolean bought) {
         this.bought = bought;
+    }
+
+    public String getEventID() {
+        return eventID;
     }
 }
