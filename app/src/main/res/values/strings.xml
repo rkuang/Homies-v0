@@ -31,4 +31,12 @@
     <string name="purchase">I have purchased for </string>
     <string name="purchase_hint">$</string>
     <string name="none">Nothing</string>
+
+    <string name="view_owed">View Owed</string>
+    <string name="view_owe">View Owe</string>
+    <string name="owe_message">Owe Message</string>
+    <string name="you_owe">People you owe:</string>
+    <string name="youre_owed">People who owe you:</string>
+    <string name="no_owed">No one owes you money!</string>
+    <string name="no_owe">You do not owe any money!</string>
 </resources>

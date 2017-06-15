@@ -11,6 +11,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +38,8 @@ import edu.ucsb.cs.cs190i.rkuang.homies.R;
 import edu.ucsb.cs.cs190i.rkuang.homies.fragments.ChargeFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.fragments.GroupsFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.fragments.PostsFragment;
+import edu.ucsb.cs.cs190i.rkuang.homies.fragments.OweFragment;
+import edu.ucsb.cs.cs190i.rkuang.homies.fragments.OwedFragment;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.Owe;
 import edu.ucsb.cs.cs190i.rkuang.homies.models.User;
 
@@ -47,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private GoogleApiClient googleApiClient;
     private String photoURL;
     private String name;
+    private String TAG = "MainActivity";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,8 +104,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Iterator<DataSnapshot> snaps = dataSnapshot.child("owed").getChildren().iterator();
                         double sum = 0;
                         while(snaps.hasNext()){
-                            DataSnapshot user = snaps.next();
-                            double amt = ((Number)user.child("amount").getValue()).doubleValue();
+                            DataSnapshot item = snaps.next();
+                            double amt = ((Number)item.child("amount").getValue()).doubleValue();
                             sum += amt;
                         }
                         String dispOwed = String.format(getString(R.string.owed) +" $%.2f", sum);
@@ -116,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                         Iterator<DataSnapshot> snaps = dataSnapshot.child("owe").getChildren().iterator();
                         double sum = 0;
                         while(snaps.hasNext()){
-                            DataSnapshot user = snaps.next();
-                            double amt = ((Number)user.child("amount").getValue()).doubleValue();
+                            DataSnapshot item = snaps.next();
+                            double amt = ((Number)item.child("amount").getValue()).doubleValue();
                             sum += amt;
                         }
                         String dispOwed = String.format(getString(R.string.owe)+" $%.2f", sum);
@@ -135,8 +139,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 }
             });
         }
-
-
         getSupportFragmentManager().beginTransaction().replace(R.id.container, new PostsFragment()).commit();
     }
 
@@ -166,6 +168,12 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                 break;
             case R.id.nav_groups:
                 fragment = new GroupsFragment();
+                break;
+            case R.id.nav_owed:
+                fragment = new OwedFragment();
+                break;
+            case R.id.nav_owe:
+                fragment = new OweFragment();
                 break;
             case R.id.nav_sign_out:
                 firebaseAuth.signOut();

@@ -11,6 +11,16 @@
             android:id="@+id/nav_groups"
             android:icon="@drawable/ic_group_black_24dp"
             android:title="Groups" />
+
+        <item
+            android:id="@+id/nav_owed"
+            android:icon="@drawable/ic_group_black_24dp"
+            android:title="View Owed" />
+
+        <item
+            android:id="@+id/nav_owe"
+            android:icon="@drawable/ic_group_black_24dp"
+            android:title="View Owe" />
     </group>
 
     <item android:title="Account">

@@ -101,8 +101,9 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.ViewHolder> {
             holder.delete.setVisibility(View.INVISIBLE);
         }
 
-        if (item.isBought())
+        if (item.isBought()) {
             holder.boughtMarker.setVisibility(View.VISIBLE);
+        }
         else
             holder.boughtMarker.setVisibility(View.INVISIBLE);
 
